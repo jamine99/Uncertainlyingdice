@@ -18,6 +18,10 @@ class Player:
     def show_dice(self):
         print("Dice: " + ", ".join([str(dice) for dice in self.dice]))
 
+    def takeBet(self, name):
+        return input(name + ", please enter your bet <value of dice> <number of dice> or NO to challenge previous bet: ")
+
+
 
 class GameState:
     def __init__(self,player1,player2):
@@ -25,7 +29,7 @@ class GameState:
         self.player2 = player2
         self.prevBet = None
         self.totDice = len(self.player1.dice) + len(self.player2.dice)
-        #Bet will be a tuple of (string,tuple)->(playerName,(DiceNumber, Number of that dice))
+        #Bet will be a tuple of (DiceNumber, Number of that dice)
     def setPrevBet(self, prevBet):
         self.prevBet = prevBet
 
@@ -82,11 +86,6 @@ def checkBet(state):
         return True
     return False
 
-def takeBet(name, isHuman):
-    if isHuman:
-        bet = input(name + ", please enter your bet <value of dice> <number of dice> or NO to challenge previous bet: ")
-        return bet
-
 #plays through one round of da game and returns which player won that round
 #P1 always goes first
 def round(state):
@@ -105,7 +104,7 @@ def round(state):
             #always set to human first but we dont gotta once we start making bots
             p1Split = None
             while True:
-                p1Bet = takeBet(currPlayer.name, True)
+                p1Bet = currPlayer.takeBet(currPlayer.name, True)
                 p1Split = p1Bet.split()
                 if is_valid_bet(state, p1Split): break
             print(currPlayer.name + " bet " + p1Split[1] + " dice of value " + p1Split[0])
@@ -115,7 +114,7 @@ def round(state):
             #always set to human first but we dont gotta once we start making bots
             currBetSplit = None
             while True:
-                currBet = takeBet(currPlayer.name, True)
+                currBet = currPlayer.takeBet(currPlayer.name, True)
 
                 #deal with the challenge
                 if currBet.lower() == "no":
