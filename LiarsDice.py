@@ -1,4 +1,5 @@
 from agents.player import Player
+from agents.probabilitybot import ProbabilityBot
 
 
 class GameState:
