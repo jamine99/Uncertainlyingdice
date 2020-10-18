@@ -18,5 +18,5 @@ class Player:
     def show_dice(self):
         print("Dice: " + ", ".join([str(dice) for dice in self.dice]))
 
-    def takeBet(self):
+    def takeBet(self,state):
         return input(self.name + ", please enter your bet <value of dice> <number of dice> or NO to challenge previous bet: ")

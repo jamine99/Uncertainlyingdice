@@ -26,7 +26,7 @@ class GameState:
 
     def totDice(self):
         return len(self.player1.dice) + len(self.player2.dice)
-        
+
 
 def is_valid_bet(state, bet):
     if len(bet) != 2:
@@ -88,7 +88,7 @@ def round(state):
             #always set to human first but we dont gotta once we start making bots
             p1Split = None
             while True:
-                p1Bet = currPlayer.takeBet()
+                p1Bet = currPlayer.takeBet(state)
                 p1Split = p1Bet.split()
                 if is_valid_bet(state, p1Split): break
             print(currPlayer.name + " bet " + p1Split[1] + " dice of value " + p1Split[0])
@@ -98,7 +98,7 @@ def round(state):
             #always set to human first but we dont gotta once we start making bots
             currBetSplit = None
             while True:
-                currBet = currPlayer.takeBet()
+                currBet = currPlayer.takeBet(state)
 
                 #deal with the challenge
                 if currBet.lower() == "no":
