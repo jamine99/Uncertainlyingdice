@@ -40,7 +40,7 @@ def is_valid_bet(state, bet):
         print("Value of dice must be between 1 and 6.")
         return False
 
-    if num_dice > state.totDice:
+    if num_dice > state.totDice():
         print("Number of dice must be less than or equal to total number of dice.")
         return False
 
