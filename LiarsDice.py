@@ -6,7 +6,7 @@ class GameState:
         self.player1 = player1
         self.player2 = player2
         self.prevBet = None
-        self.totDice = len(self.player1.dice) + len(self.player2.dice)
+
         #Bet will be a tuple of (DiceNumber, Number of that dice)
     def setPrevBet(self, prevBet):
         self.prevBet = prevBet
@@ -23,6 +23,10 @@ class GameState:
         if self.prevBet != None:
             string += "\tPrevious bet was " + self.prevBet[1] + " " + self.prevBet[0] +  "s.\n"
         return string
+
+    def totDice(self):
+        return len(self.player1.dice) + len(self.player2.dice)
+        
 
 def is_valid_bet(state, bet):
     if len(bet) != 2:
