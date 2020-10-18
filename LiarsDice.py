@@ -95,8 +95,10 @@ def round(state):
     currPlayer = p1
     while(True):
         # Show player 1's hand as if we are player 1.
-        if currPlayer == p1:
-            p1.show_dice()
+        #if currPlayer == p1:
+        #    p1.show_dice()
+        # Show current player's dice, can replace with just p1 later on
+        currPlayer.show_dice()
 
         # For the first bet, do not allow challenging.
         if state.prevBet == None:
