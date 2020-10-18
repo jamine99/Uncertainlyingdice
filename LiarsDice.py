@@ -18,8 +18,8 @@ class Player:
     def show_dice(self):
         print("Dice: " + ", ".join([str(dice) for dice in self.dice]))
 
-    def takeBet(self, name):
-        return input(name + ", please enter your bet <value of dice> <number of dice> or NO to challenge previous bet: ")
+    def takeBet(self):
+        return input(self.name + ", please enter your bet <value of dice> <number of dice> or NO to challenge previous bet: ")
 
 
 
@@ -104,7 +104,7 @@ def round(state):
             #always set to human first but we dont gotta once we start making bots
             p1Split = None
             while True:
-                p1Bet = currPlayer.takeBet(currPlayer.name, True)
+                p1Bet = currPlayer.takeBet()
                 p1Split = p1Bet.split()
                 if is_valid_bet(state, p1Split): break
             print(currPlayer.name + " bet " + p1Split[1] + " dice of value " + p1Split[0])
@@ -114,7 +114,7 @@ def round(state):
             #always set to human first but we dont gotta once we start making bots
             currBetSplit = None
             while True:
-                currBet = currPlayer.takeBet(currPlayer.name, True)
+                currBet = currPlayer.takeBet()
 
                 #deal with the challenge
                 if currBet.lower() == "no":
