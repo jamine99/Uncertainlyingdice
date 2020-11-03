@@ -1,4 +1,4 @@
-import Player
+from agents.player import Player
 
 class Bot_NextFace(Player):
     def __init__(self,numDice,name):
@@ -7,7 +7,7 @@ class Bot_NextFace(Player):
     def takeBet(self, state):
         new_dice = 0
         new_numDice = 0
-        total_dice = state.totDice
+        totalDice = state.totDice()
 
         if state.prevBet == None:
             new_dice = 1

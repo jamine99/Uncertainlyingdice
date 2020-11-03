@@ -1,4 +1,4 @@
-import Player
+from agents.player import Player
 import random
 
 class Random_Bot(Player):
@@ -8,7 +8,7 @@ class Random_Bot(Player):
     def takeBet(self, state):
         new_dice = 0
         new_numDice = 0
-        total_dice = state.totDice
+        totalDice = state.totDice()
 
         if state.prevBet == None:
             new_dice = 1
@@ -36,6 +36,10 @@ class Random_Bot(Player):
                     first = False
                 else:
                     betList.append((i,j))
+        betList.append((0,0))
         bet_numDice , bet_newDice = random.choice(betList)
 
+        if bet_numDice == 0:
+            return "no"
+            
         return str(bet_numDice) + " " + str(bet_newDice)

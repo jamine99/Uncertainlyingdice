@@ -1,5 +1,9 @@
 from agents.player import Player
 from agents.probabilitybot import ProbabilityBot
+from agents.bot_challenge import Bot_Challenge
+from agents.bot_nextNum import Bot_NextNum
+from agents.bot_nextFace import Bot_NextFace
+from agents.random_bot import Random_Bot
 
 
 class GameState:
@@ -101,6 +105,7 @@ def round(state):
             while True:
                 currBet = currPlayer.takeBet(state)
 
+                print(currPlayer.name + " bet " + currBet)
                 #deal with the challenge
                 if currBet.lower() == "no":
                     if currPlayer == p1:
@@ -136,8 +141,22 @@ def play_game(max_num_dice=5, player1_name="player1", player2_name="player2"):
         player1_name (string): name for player1
         player2_name (string): name for player2
     '''
+    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability: "))
+    player2 = None
+    if player2bot == 1:
+        player2 = Player(max_num_dice, player2_name)
+    elif player2bot == 2:
+        player2 = Random_Bot(max_num_dice, "Random Bot")
+    elif player2bot == 3:
+        player2 = Bot_NextNum(max_num_dice, "Next Number Bot")
+    elif player2bot == 4:
+        player2 = Bot_NextFace(max_num_dice, "Next Face Bot")
+    elif player2bot == 5:
+        player2 = Bot_Challenge(max_num_dice, "Challenge Bot")
+    elif player2bot == 6:
+        player2 = ProbabilityBot(max_num_dice, "Probability Bot")
+
     player1 = Player(max_num_dice, player1_name)
-    player2 = Player(max_num_dice, player2_name)
     state = GameState(player1, player2)
 
     while True:

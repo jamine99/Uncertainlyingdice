@@ -1,4 +1,4 @@
-import Player
+from agents.player import Player 
 
 class Bot_Challenge(Player):
     def __init__(self,numDice,name):
