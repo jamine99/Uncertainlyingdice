@@ -39,7 +39,7 @@ def ql(s, a, r, s_prime, model):
     #     a = df[i, 2]
     #     r = df[i, 3]
     #     s′ = df[i, 4]
-    model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime,:]) - model.Q[s,a])
+    model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - model.Q[s,a])
         #model = update!(model, s, a, r, s′)
         #print(model.Q[s,a]); print("\n")
     # end
@@ -63,10 +63,10 @@ def ql_neighbors(s, a, r, s_prime, model):
                 neighbors_Q += ((1/(abs(k)+1))*model.Q[s-k, a])
         #     end
         # end
-        model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime,:]) - neighbors_Q)
+        model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - neighbors_Q)
         #print(model.Q[s,a])
     else
-        model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime,:]) - model.Q[s,a])
+        model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - model.Q[s,a])
     #     end
     #     #model = update!(model, s, a, r, s′)
     #     #print(model.Q[s,a]); print("\n")
