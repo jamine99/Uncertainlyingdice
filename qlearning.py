@@ -22,7 +22,7 @@ def ql(s, a, r, s_prime, model):
     #     a = df[i, 2]
     #     r = df[i, 3]
     #     s′ = df[i, 4]
-    model.Q[s,a] += model.α*(r + model.γ*maximum(model.Q[s′,:]) - model.Q[s,a])
+    model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime,:]) - model.Q[s,a])
         #model = update!(model, s, a, r, s′)
         #print(model.Q[s,a]); print("\n")
     # end
@@ -46,10 +46,10 @@ def ql_neighbors(s, a, r, s_prime, model):
                 neighbors_Q += ((1/(abs(k)+1))*model.Q[s-k, a])
         #     end
         # end
-        model.Q[s,a] += model.α*(r + model.γ*maximum(model.Q[s′,:]) - neighbors_Q)
+        model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime,:]) - neighbors_Q)
         #print(model.Q[s,a])
     else
-        model.Q[s,a] += model.α*(r + model.γ*maximum(model.Q[s′,:]) - model.Q[s,a])
+        model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime,:]) - model.Q[s,a])
     #     end
     #     #model = update!(model, s, a, r, s′)
     #     #print(model.Q[s,a]); print("\n")
@@ -63,14 +63,20 @@ def explore(pi, model, s):
     if rand() < epsilon:
         return rand(A)
     else:
-        Q(s,a) = lookahead(model, s, a)
-        return _argmax(a->Q(s,a), A)
+        maxScore = -100
+        maxAction= 1
+        for action in A:
+            currScore = lookahead(model,s,action)
+            if currScore > maxScore:
+                maxAction = action
+                maxScore = currScore
+        return maxAction
 
 
 
 def make_policy(pol, model):
     # for each state
-    for s in model.S
+    for s in model.S:
         # set pi(state) = action that maximizes Q[s,a]
         max_Q_val = -float("inf")
         max_action = 1
@@ -80,26 +86,3 @@ def make_policy(pol, model):
                 max_action = a
             pol[s] = max_action
     return pol
-
-small_df = DataFrame!(CSV.File("data/small.csv"))
-nstates_small = 100
-nactions_small = 4
-Q_small = zeros(nstates_small, nactions_small)
-S_small = 1:nstates_small
-A_small = 1:nactions_small
-γ_small = 0.95
-α_small = 0.2
-
-
-ϵ = 0.1 # probability of random action
-α = 1.0 # exploration decay factor
-π = EpsilonGreedyExploration(ϵ, α)
-
-#call exploration func
-
-
-small_model = QLearning(S_small, A_small, γ_small, Q_small, α_small)
-small_pol = zeros(nstates_small)
-ql(small_df, small_model)
-final_small_pol = make_policy(small_pol, small_model)
-writedlm("small.policy", final_small_pol)
