@@ -1,6 +1,6 @@
 class QLearning:
-    def __init__(self, S, A, gamma, Q, alpha):
-        self.S # state space (assumes 1:nstates)
+    def __init__(self, A, gamma, Q, alpha):
+        self.S = enumerateStateList # state space (assumes 1:nstates)
         self.A = A # action space (assumes 1:nactions)
         self.gamma = gamma # discount
         self.Q = Q # action value function
@@ -13,6 +13,23 @@ class EpsilonGreedyExploration(self, epsilon, alpha):
 
 def lookahead(model, s, a):
     return model.Q[s,a]
+
+#inSANElyEpic
+def enumerateStateList(self):
+    ret = []
+    ret.append(-1)
+    ret.append(1)
+    for a in range(1,7):
+        for b in range(1,7):
+            for c in range(1,7):
+                for d in range(1,7):
+                    for e in range(1,7):
+                        for f in range(1,7):
+                            for g in range(1,11):
+                                currState = ""
+                                currState += str(a)+str(b)+str(c)+str(d)+str(e)+str(f)+str(g)
+                                ret.append(int(currState))
+    return ret
 
 def ql(s, a, r, s_prime, model):
     # input is some dataframe
