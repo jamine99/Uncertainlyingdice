@@ -35,11 +35,11 @@ class Random_Bot(Player):
                 if first:
                     first = False
                 else:
-                    betList.append((i,j))
+                    betList.append((j,i))
         betList.append((0,0))
         bet_numDice , bet_newDice = random.choice(betList)
 
         if bet_numDice == 0:
             return "no"
-            
+
         return str(bet_numDice) + " " + str(bet_newDice)
