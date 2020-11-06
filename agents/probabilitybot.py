@@ -36,6 +36,8 @@ class ProbabilityBot(Player):
                         highest_prob_bet = (value, num_dice)
                         highest_prob = prob
 
+            if highest_prob_bet == None: return "no"
+
             return " ".join([str(element) for element in list(highest_prob_bet)])
 
     def compute_probability(self, bet, opponent_num_dice):

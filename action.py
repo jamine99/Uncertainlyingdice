@@ -3,10 +3,11 @@ class Action:
         self.num_values = num_values
         self.total_num_dice = num_dice * 2
 
-    def get_index(self, value, num_dice):
+    def get_index(self, bet):
         """
         Given a bet, return the corresponding index.
         """
+        value, num_dice = bet
         # Reserve index 0 for challenge bet.
         if value == -1 or num_dice == -1:
             return 0

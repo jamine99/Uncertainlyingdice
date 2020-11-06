@@ -1,4 +1,5 @@
 import collections
+import random
 
 class QLearning:
     def __init__(self, A, gamma, alpha):
@@ -8,7 +9,7 @@ class QLearning:
         self.Q = collections.defaultdict(float) # action value function
         self.alpha = alpha # learning rate
 
-class EpsilonGreedyExploration(self, epsilon, alpha):
+class EpsilonGreedyExploration:
     def __init__(self, epsilon, alpha):
         self.epsilon = epsilon
         self.alpha = alpha
@@ -17,7 +18,7 @@ def lookahead(model, s, a):
     return model.Q[s,a]
 
 #inSANElyEpic
-def enumerateStateList(self):
+def enumerateStateList():
     ret = []
     ret.append(-1)
     ret.append(1)
@@ -59,15 +60,15 @@ def ql_neighbors(s, a, r, s_prime, model):
     #     s′ = df[i, 4]
     if model.Q[s,a] == 0:
         neighbors_Q = 0
-        for k in -20:20:
+        for k in range(-20,20):
             # 40 nearest states (bets with same quantity of dice and bets where we have same amount of same dice)
-            if s-k > 0 && s-k < 50000:
+            if s-k > 0 and s-k < 50000:
                 neighbors_Q += ((1/(abs(k)+1))*model.Q[s-k, a])
         #     end
         # end
         model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - neighbors_Q)
         #print(model.Q[s,a])
-    else
+    else:
         model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - model.Q[s,a])
     #     end
     #     #model = update!(model, s, a, r, s′)
@@ -79,8 +80,8 @@ def ql_neighbors(s, a, r, s_prime, model):
 
 def explore(pi, model, s):
     A, epsilon = model.A, pi.epsilon
-    if rand() < epsilon:
-        return rand(A)
+    if random.random() < epsilon:
+        return random.choice(A)
     else:
         maxScore = -100
         maxAction= 1
@@ -100,7 +101,7 @@ def make_policy(pol, model):
         max_Q_val = -float("inf")
         max_action = 1
         for a in model.A:
-            if model.Q[s,a] > max_Q_val && model.Q[s,a] != 0:
+            if model.Q[s,a] > max_Q_val and model.Q[s,a] != 0:
                 max_Q_val = model.Q[s,a]
                 max_action = a
             pol[s] = max_action
