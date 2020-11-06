@@ -1,9 +1,11 @@
+import collections
+
 class QLearning:
-    def __init__(self, A, gamma, Q, alpha):
-        self.S = enumerateStateList # state space (assumes 1:nstates)
+    def __init__(self, A, gamma, alpha):
+        self.S = enumerateStateList() # state space (assumes 1:nstates)
         self.A = A # action space (assumes 1:nactions)
         self.gamma = gamma # discount
-        self.Q = Q # action value function
+        self.Q = collections.defaultdict(float) # action value function
         self.alpha = alpha # learning rate
 
 class EpsilonGreedyExploration(self, epsilon, alpha):
