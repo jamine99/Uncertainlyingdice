@@ -17,21 +17,33 @@ class EpsilonGreedyExploration:
 def lookahead(model, s, a):
     return model.Q[s,a]
 
-#inSANElyEpic
+#inSANElyEpic generateFullStatespace
+#def enumerateStateList():
+#    ret = []
+#    ret.append(-1)
+#    ret.append(1)
+#    for a in range(0,6):
+#        for b in range(0,5-a+1):
+#            for c in range(0,5-a-b+1):
+#                for d in range(0,5-a-b-c+1):
+#                    for e in range(0,5-a-b-c-d+1):
+#                        for f in range(1,7):
+#                            for g in range(1,11):
+#                                currState = ""
+#                                currState += str(a)+str(b)+str(c)+str(d)+str(e)+str(f)+str(g)
+#                                ret.append(int(currState))
+
 def enumerateStateList():
     ret = []
     ret.append(-1)
     ret.append(1)
-    for a in range(0,6):
-        for b in range(0,5-a+1):
-            for c in range(0,5-a-b+1):
-                for d in range(0,5-a-b-c+1):
-                    for e in range(0,5-a-b-c-d+1):
-                        for f in range(1,7):
-                            for g in range(1,11):
-                                currState = ""
-                                currState += str(a)+str(b)+str(c)+str(d)+str(e)+str(f)+str(g)
-                                ret.append(int(currState))
+    for a in range(1,7):
+        for b in range(1,10):
+            for c in range(1,5):
+                for d in range(1,5):
+                    currState = ""
+                    currState += str(a)+str(b)+str(c)+str(d)
+                    ret.append(int(currState))
     return ret
 
 def ql(s, a, r, s_prime, model):
