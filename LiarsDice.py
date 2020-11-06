@@ -6,6 +6,7 @@ from agents.bot_nextFace import Bot_NextFace
 from agents.random_bot import Random_Bot
 from agents.qlearn_bot import QBot
 
+from agents.reduced_state import ReducedState
 from agents.QlearningState import state
 import qlearning
 
@@ -19,7 +20,7 @@ class GameState:
         self.player1 = player1
         self.player2 = player2
         self.prevBet = None
-        self.prev_state = state(self.player1.dice, (0, 0))
+        self.prev_state = ReducedState(self.player1.dice, (0, 0))
 
         #Bet will be a tuple of (DiceNumber, Number of that dice)
     def setPrevBet(self, prevBet):
@@ -29,7 +30,7 @@ class GameState:
         self.player1.roll_dice()
         self.player2.roll_dice()
         self.prevBet = None
-        self.prev_state = state(self.player1.dice, (0, 0))
+        self.prev_state = ReducedState(self.player1.dice, (0, 0))
 
     def to_string(self):
         string = "Current Game State: \n"
@@ -252,7 +253,7 @@ def simulate_round(game):
 
             # If not q-learning agent
             if currPlayer == p2:
-                new_state = state(qbot.dice, new_bet)
+                new_state = ReducedState(qbot.dice, new_bet)
                 qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index(game.prevBet), new_state.generateNumber(), 0, qbot.model)
 
             # Right before we update the previous bet to be p1's current bet, we update our prev_state to be the previous bet which is p2's last bet.
@@ -265,7 +266,7 @@ def simulate_round(game):
         currPlayer = p2 if currPlayer == qbot else qbot
 
 
-def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=100000):
+def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=1000000):
     '''
     Simulates many rounds of Liar's Dice for QLearning.
 
@@ -302,6 +303,9 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
         winner = simulate_round(game)
         wins[winner.name] += 1
         game.reset_to_round_start()
+
+    for key in qbot.model.Q:
+        print(key, qbot.model.Q[key])
 
     print("RESULTS")
     print("Wins for {}: {}\n".format(player1_name, wins[player1_name]))

@@ -1,6 +1,6 @@
 from collections import Counter
 
-class reduced_State:
+class ReducedState:
     def __init__(self,dice,bet):
         self.data = []
         valDice, numDice = bet
@@ -24,4 +24,7 @@ class reduced_State:
         for i in self.data:
             num += str(i)
         return int(num)
-        
+
+    def update_bet(self, bet):
+        self.data[0] = bet[0]
+        self.data[1] = bet[1]
