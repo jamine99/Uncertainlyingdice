@@ -42,3 +42,47 @@ class Action:
         Return all actions by index.
         """
         return list(range(self.num_values * self.total_num_dice))
+
+    def possible_actions(self, state):
+        """
+        Generate all possible legal actions given a state.
+        """
+        new_dice = 0
+        new_numDice = 0
+        totalDice = state.totDice()
+
+        if state.prevBet == None:
+            new_dice = 1
+            new_numDice = 1
+        else:
+            prev_dice = state.prevBet[0]
+            prev_numDice = state.prevBet[1]
+
+            if prev_numDice != totalDice: # if prev_numDice was not totalDice, then increment new_numDice but keep new_dice the same
+                new_numDice = prev_numDice + 1
+                new_dice = prev_dice
+            else: # if prev_numDice was totalDice, then only increment new_dice (if possible) and keep new_numDice the same
+                if prev_dice != 6:
+                    new_numDice = prev_numDice
+                    new_dice = prev_dice + 1
+
+        first = True
+        bet_numDice = None
+        bet_newDice = None
+        betList = []
+        for i in range(new_numDice,totalDice+1):
+            for j in range(new_dice,7):
+                if first:
+                    first = False
+                else:
+                    betList.append((j,i))
+
+        # Include the challenge bet if not first turn.
+        if state.prevBet != None:
+            betList.append((-1, -1))
+
+        # Turn it into index.
+        ret = []
+        for i in betList:
+            ret.append(self.get_index(i))
+        return ret
