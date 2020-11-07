@@ -2,8 +2,9 @@ import collections
 import random
 
 class QLearning:
-    def __init__(self, A, gamma, alpha):
+    def __init__(self, action, A, gamma, alpha):
         self.S = enumerateStateList() # state space (assumes 1:nstates)
+        self.action = action
         self.A = A # action space (assumes 1:nactions)
         self.gamma = gamma # discount
         self.Q = collections.defaultdict(float) # action value function
@@ -100,11 +101,11 @@ def ql_neighbors(s, a, r, s_prime, model):
 def explore(pi, model, s):
     A, epsilon = model.A, pi.epsilon
     if random.random() < epsilon:
-        return random.choice(A)
+        return random.choice(model.action.possible_actions(s))
     else:
         maxScore = -100
         maxAction= 1
-        for action in A:
+        for action in model.action.possible_actions(s):
             currScore = lookahead(model,s,action)
             if currScore > maxScore:
                 maxAction = action
