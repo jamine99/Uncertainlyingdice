@@ -2,6 +2,7 @@ from collections import Counter
 
 class ReducedState:
     def __init__(self,dice,bet):
+        self.dice = dice
         self.data = []
         valDice, numDice = bet
         self.data.append(valDice)
@@ -26,5 +27,18 @@ class ReducedState:
         return int(num)
 
     def update_bet(self, bet):
-        self.data[0] = bet[0]
-        self.data[1] = bet[1]
+        valDice, numDice = bet
+        self.data[0] = valDice
+        self.data[1] = numDice
+        selfBetDice = 0
+        selfMostDice = 0
+        selfNumMostDice = 0
+        d = Counter(self.dice)
+        for i in range(1,7):
+            if d[i] > selfMostDice:
+                selfMostDice = i
+                selfNumMostDice = d[i]
+            if i == valDice:
+                selfBetDice = d[i]
+        self.data[3] = selfBetDice
+        self.data[4] = selfMostDice
