@@ -303,6 +303,8 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
         winner = simulate_round(game)
         wins[winner.name] += 1
         game.reset_to_round_start()
+        if i%100000 == 0:
+            qbot.model.saveQFunction("qfunction.txt")
 
     for key in qbot.model.Q:
         print(key, qbot.model.Q[key])

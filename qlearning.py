@@ -1,15 +1,20 @@
 import collections
 import random
-from action import Action
 
 class QLearning:
-    def __init__(self, action, A, gamma, alpha):
+    def __init__(self, A, gamma, alpha):
         self.S = enumerateStateList() # state space (assumes 1:nstates)
-        self.action = action
         self.A = A # action space (assumes 1:nactions)
         self.gamma = gamma # discount
         self.Q = collections.defaultdict(float) # action value function
         self.alpha = alpha # learning rate
+
+    def saveQFunction(self,fileName):
+        f = open(fileName,"w")
+        for key,value in self.Q:
+            x = str(key)
+            f.write(x + "," + str(value))
+
 
 class EpsilonGreedyExploration:
     def __init__(self, epsilon, alpha):
@@ -95,19 +100,16 @@ def ql_neighbors(s, a, r, s_prime, model):
 def explore(pi, model, s):
     A, epsilon = model.A, pi.epsilon
     if random.random() < epsilon:
-        print("random action")
-        return random.choice(model.action.possible_actions(s))
+        return random.choice(A)
     else:
         maxScore = -100
         maxAction= 1
-        for action in model.action.possible_actions(s):
+        for action in A:
             currScore = lookahead(model,s,action)
             if currScore > maxScore:
                 maxAction = action
                 maxScore = currScore
-        print("Max action: ", maxAction)
         return maxAction
-
 
 def make_policy(pol, model):
     # for each state
