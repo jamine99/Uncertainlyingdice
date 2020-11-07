@@ -40,5 +40,5 @@ class ReducedState:
                 selfNumMostDice = d[i]
             if i == valDice:
                 selfBetDice = d[i]
-        self.data[3] = selfBetDice
-        self.data[4] = selfMostDice
+        self.data[2] = selfBetDice
+        self.data[3] = selfMostDice
