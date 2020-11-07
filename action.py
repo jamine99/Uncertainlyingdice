@@ -65,6 +65,9 @@ class Action:
                 if prev_dice != 6:
                     new_numDice = prev_numDice
                     new_dice = prev_dice + 1
+                else:
+                    # Return only the index for the challenge bet.
+                    return [0]
 
         first = True
         bet_numDice = None
