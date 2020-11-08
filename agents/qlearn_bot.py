@@ -10,7 +10,7 @@ class QBot(Player):
         self.strategy = EpsilonGreedyExploration(0.2, 0.01)
 
     def takeBet(self, state):
-        a = explore(self.strategy, self.model, state)
+        a = explore(self.strategy, self.model, state.prev_state)
         bet = self.action.get_bet(a)
         if bet[0] == -1:
             return "no"
