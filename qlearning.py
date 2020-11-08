@@ -13,8 +13,7 @@ class QLearning:
     def saveQFunction(self,fileName):
         f = open(fileName,"w")
         for key,value in self.Q:
-            x = str(key)
-            f.write(x + "," + str(value))
+            f.write(key[0] + " " + key[1]+ + str(value)+"\n")
 
 
 class EpsilonGreedyExploration:
