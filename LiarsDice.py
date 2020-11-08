@@ -164,18 +164,18 @@ def simulate_round(game):
 
                     if checkBet(game):
                         if currPlayer == p2:
-                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index(game.prevBet), TERMINAL_WIN_STATE, WINNING_ROUND_REWARD, qbot.model)
+                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index(game.prevBet), WINNING_ROUND_REWARD, TERMINAL_WIN_STATE, qbot.model)
                         else:
                             # Current action is a challenge bet denoted as (-1, -1).
-                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index((-1, -1)), TERMINAL_LOSE_STATE, LOSING_ROUND_REWARD, qbot.model)
+                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index((-1, -1)), LOSING_ROUND_REWARD, TERMINAL_LOSE_STATE, qbot.model)
                         print(opposingPlayer.name + " Won This Round!")
                         return opposingPlayer
                     else:
                         if currPlayer == p2:
-                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index(game.prevBet), TERMINAL_LOSE_STATE, LOSING_ROUND_REWARD, qbot.model)
+                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index(game.prevBet), LOSING_ROUND_REWARD, TERMINAL_LOSE_STATE, qbot.model)
                         else:
                             # Current action is a challenge bet denoted as (-1, -1).
-                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index((-1, -1)), TERMINAL_WIN_STATE, WINNING_ROUND_REWARD, qbot.model)
+                            qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index((-1, -1)), WINNING_ROUND_REWARD, TERMINAL_WIN_STATE, qbot.model)
                         print(currPlayer.name + " Won This Round!")
                         return currPlayer
 
@@ -188,7 +188,7 @@ def simulate_round(game):
             # If not q-learning agent
             if currPlayer == p2:
                 new_state = ReducedState(qbot.dice, new_bet)
-                qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index(game.prevBet), new_state.generateNumber(), 0, qbot.model)
+                qlearning.ql(game.prev_state.generateNumber(), qbot.action.get_index(game.prevBet), 0, new_state.generateNumber(), qbot.model)
 
             # Right before we update the previous bet to be p1's current bet, we update our prev_state to be the previous bet which is p2's last bet.
             if currPlayer == qbot:
