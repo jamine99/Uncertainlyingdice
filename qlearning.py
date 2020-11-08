@@ -73,14 +73,14 @@ def ql_neighbors(s, a, r, s_prime, model):
     else:
         model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - model.Q[s,a])
 
-def explore(pi, model, s):
+def explore(pi, model, s, game_state):
     A, epsilon = model.A, pi.epsilon
     if random.random() < epsilon:
-        return random.choice(model.action.possible_actions(s))
+        return random.choice(model.action.possible_actions(game_state))
     else:
         maxScore = -100
         maxAction= 1
-        for action in model.action.possible_actions(s):
+        for action in model.action.possible_actions(game_state):
             currScore = lookahead(model,s,action)
             if currScore > maxScore:
                 maxAction = action
