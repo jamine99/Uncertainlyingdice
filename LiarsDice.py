@@ -200,7 +200,7 @@ def simulate_round(game):
         currPlayer = p2 if currPlayer == qbot else qbot
 
 
-def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=1000000):
+def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=20):
     '''
     Simulates many rounds of Liar's Dice for QLearning.
 
@@ -242,7 +242,7 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
             plot_color = "blue"
         else:
             plot_color = "red"
-        plt.scatter(i, wins[winner.name] / num_rounds, color=plot_color)
+        plt.scatter(i, wins[winner.name] / (i + 1), color=plot_color)
 
         game.reset_to_round_start()
         if i%100000 == 0:
@@ -263,7 +263,7 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
     plt.show()
 
 
-def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="player2", num_rounds=1000000):
+def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="player2", num_rounds=20):
     """
     Set up and simulate many rounds using Monte Carlo Tree Search (mcts).
 
@@ -305,7 +305,7 @@ def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="pl
             plot_color = "blue"
         else:
             plot_color = "red"
-        plt.scatter(i, wins[winner.name] / num_rounds, color=plot_color)
+        plt.scatter(i, wins[winner.name] / (i + 1), color=plot_color)
 
         game.reset_to_round_start()
 
