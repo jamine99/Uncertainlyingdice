@@ -15,6 +15,8 @@ from utils import WINNING_ROUND_REWARD, LOSING_ROUND_REWARD, TERMINAL_LOSE_STATE
 from utils import is_valid_bet, checkBet
 
 from gamestate import GameState
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 #plays through one round of da game and returns which player won that round
 #P1 always goes first
@@ -234,6 +236,14 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
     for i in range(num_rounds):
         winner = simulate_round(game)
         wins[winner.name] += 1
+
+        plot_color = ""
+        if winner.name == player1_name:
+            plot_color = "blue"
+        else:
+            plot_color = "red"
+        plt.scatter(i, wins[winner.name] / num_rounds, color=plot_color)
+
         game.reset_to_round_start()
         if i%100000 == 0:
             qbot.model.saveQFunction("qfunction.txt")
@@ -244,9 +254,16 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
     print("RESULTS")
     print("Wins for {}: {}\n".format(player1_name, wins[player1_name]))
     print("Wins for {}: {}\n".format(player2_name, wins[player2_name]))
+    plt.title("Wins Over Time")
+    plt.xlabel("Rounds")
+    plt.ylabel("Wins")
+    player1_legend = mpatches.Patch(color="blue", label=player1_name)
+    player2_legend = mpatches.Patch(color="red", label=player2_name)
+    plt.legend(handles=[player1_legend, player2_legend])
+    plt.show()
 
 
-def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="player2", num_rounds=1000):
+def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="player2", num_rounds=1000000):
     """
     Set up and simulate many rounds using Monte Carlo Tree Search (mcts).
 
@@ -282,11 +299,26 @@ def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="pl
     for i in range(num_rounds):
         winner = simulate_mcts_round(game)
         wins[winner.name] += 1
+
+        plot_color = ""
+        if winner.name == player1_name:
+            plot_color = "blue"
+        else:
+            plot_color = "red"
+        plt.scatter(i, wins[winner.name] / num_rounds, color=plot_color)
+
         game.reset_to_round_start()
 
     print("RESULTS")
     print("Wins for {}: {}\n".format(player1_name, wins[player1_name]))
     print("Wins for {}: {}\n".format(player2_name, wins[player2_name]))
+    plt.title("Percentage of Wins Over Time")
+    plt.xlabel("Rounds")
+    plt.ylabel("Percentage of Wins")
+    player1_legend = mpatches.Patch(color="blue", label=player1_name)
+    player2_legend = mpatches.Patch(color="red", label=player2_name)
+    plt.legend(handles=[player1_legend, player2_legend])
+    plt.show()
 
 
 def simulate_mcts_round(state):
