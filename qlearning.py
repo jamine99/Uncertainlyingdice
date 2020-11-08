@@ -1,5 +1,6 @@
 import collections
 import random
+from gamestate import GameState
 
 class QLearning:
     def __init__(self, action, A, gamma, alpha):
@@ -12,8 +13,11 @@ class QLearning:
 
     def saveQFunction(self,fileName):
         f = open(fileName,"w")
-        for key,value in self.Q:
-            f.write(key[0] + " " + key[1]+ + str(value)+"\n")
+        for key in self.Q:
+            if isinstance(key,GameState):
+                continue
+            print(str(key[0])+" " + str(key[1]))
+            f.write(str(key[0])+" " + str(key[1])+" "+str(self.Q[key[0],key[1]])+"\n")
 
 
 class EpsilonGreedyExploration:
@@ -54,6 +58,8 @@ def enumerateStateList():
     return ret
 
 def ql(s, a, r, s_prime, model):
+    print("STATE:",s)
+    print("STATE_PRIME:",s_prime)
     model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - model.Q[s,a])
 
 def ql_neighbors(s, a, r, s_prime, model):
