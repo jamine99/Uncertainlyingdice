@@ -5,84 +5,16 @@ from agents.bot_nextNum import Bot_NextNum
 from agents.bot_nextFace import Bot_NextFace
 from agents.random_bot import Random_Bot
 from agents.qlearn_bot import QBot
+from agents.mcts_bot import MctsBot
 
 from agents.reduced_state import ReducedState
 from agents.QlearningState import state
+
 import qlearning
+from utils import WINNING_ROUND_REWARD, LOSING_ROUND_REWARD, TERMINAL_LOSE_STATE, TERMINAL_WIN_STATE
+from utils import is_valid_bet, checkBet
 
-WINNING_ROUND_REWARD = 10
-LOSING_ROUND_REWARD = -10
-TERMINAL_WIN_STATE = 1
-TERMINAL_LOSE_STATE = -1
-
-class GameState:
-    def __init__(self,player1,player2):
-        self.player1 = player1
-        self.player2 = player2
-        self.prevBet = None
-        self.prev_state = ReducedState(self.player1.dice, (0, 0))
-
-        #Bet will be a tuple of (DiceNumber, Number of that dice)
-    def setPrevBet(self, prevBet):
-        self.prevBet = prevBet
-
-    def reset_to_round_start(self):
-        self.player1.roll_dice()
-        self.player2.roll_dice()
-        self.prevBet = None
-        self.prev_state = ReducedState(self.player1.dice, (0, 0))
-
-    def to_string(self):
-        string = "Current Game State: \n"
-        string += "\t" + self.player1.name + " has " + str(len(self.player1.dice)) + " dice left.\n"
-        string +="\t" + self.player2.name + " has " + str(len(self.player2.dice)) + " dice left.\n"
-        if self.prevBet != None:
-            string += "\tPrevious bet was " + self.prevBet[1] + " " + self.prevBet[0] +  "s.\n"
-        return string
-
-    def totDice(self):
-        return len(self.player1.dice) + len(self.player2.dice)
-
-
-def is_valid_bet(state, bet):
-    if len(bet) != 2:
-        print("Bet must be in the format <value of dice> <number of dice>.")
-        return False
-
-    dice = int(bet[0])
-    num_dice = int(bet[1])
-
-    if dice < 1 or dice > 6:
-        print("Value of dice must be between 1 and 6.")
-        return False
-
-    if num_dice > state.totDice():
-        print("Number of dice must be less than or equal to total number of dice.")
-        return False
-
-    if state.prevBet != None:
-        if dice <= state.prevBet[0] and num_dice <= state.prevBet[1]:
-            print("Value of dice or number of dice must be greater than the previous bet's value or number.")
-            return False
-
-    return True
-
-
-#CheckBet returns true if the bet is satisfied
-#Bet here will just be a tuple of dicenumber to number of that dice
-def checkBet(state):
-    dice = state.prevBet[0]
-    numDice = state.prevBet[1]
-    count = 0
-    for p1Dice in state.player1.dice:
-        if p1Dice == dice:
-            count+=1
-    for p2Dice in state.player2.dice:
-        if p2Dice == dice:
-            count+=1
-    if numDice <= count:
-        return True
-    return False
+from gamestate import GameState
 
 #plays through one round of da game and returns which player won that round
 #P1 always goes first
@@ -314,5 +246,108 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
     print("Wins for {}: {}\n".format(player2_name, wins[player2_name]))
 
 
+def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="player2", num_rounds=1000):
+    """
+    Set up and simulate many rounds using Monte Carlo Tree Search (mcts).
+
+    Args:
+        max_num_dice (int): the number of dice each player starts with.
+        player1_name (string): name for player1
+        player2_name (string): name for player2
+    """
+    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability: "))
+    player2 = None
+    if player2bot == 1:
+        player2 = Player(max_num_dice, player2_name)
+    elif player2bot == 2:
+        player2_name = "Random Bot"
+        player2 = Random_Bot(max_num_dice, player2_name)
+    elif player2bot == 3:
+        player2_name = "Next Number Bot"
+        player2 = Bot_NextNum(max_num_dice, player2_name)
+    elif player2bot == 4:
+        player2_name = "Next Face Bot"
+        player2 = Bot_NextFace(max_num_dice, player2_name)
+    elif player2bot == 5:
+        player2_name = "Challenge Bot"
+        player2 = Bot_Challenge(max_num_dice, player2_name)
+    elif player2bot == 6:
+        player2_name = "Probability Bot"
+        player2 = ProbabilityBot(max_num_dice, player2_name)
+
+    mctsbot = MctsBot(max_num_dice, player1_name)
+    game = GameState(mctsbot, player2)
+
+    wins = { player1_name : 0, player2_name: 0 }
+    for i in range(num_rounds):
+        winner = simulate_mcts_round(game)
+        wins[winner.name] += 1
+        game.reset_to_round_start()
+
+    print("RESULTS")
+    print("Wins for {}: {}\n".format(player1_name, wins[player1_name]))
+    print("Wins for {}: {}\n".format(player2_name, wins[player2_name]))
+
+
+def simulate_mcts_round(state):
+    """
+    Simulate one round using an mcts bot. In particular, this means not updating
+    any data structures within this function but rather letting the bot simulate
+    and do online planning.
+
+    Args:
+        state (GameState): state of the game.
+    """
+    print(state.to_string())
+    mctsbot = state.player1
+    p2 = state.player2
+    currPlayer = mctsbot
+    while(True):
+        # Show player 1's hand as if we are player 1.
+        #if currPlayer == p1:
+        #    p1.show_dice()
+        # Show current player's dice, can replace with just p1 later on
+        currPlayer.show_dice()
+
+        # For the first bet, do not allow challenging.
+        if state.prevBet == None:
+            print(currPlayer.name + ": First Turn Bet")
+            #always set to human first but we dont gotta once we start making bots
+            p1Split = None
+            while True:
+                p1Bet = currPlayer.takeBet(state)
+                p1Split = p1Bet.split()
+                if is_valid_bet(state, p1Split): break
+            print(currPlayer.name + " bet " + p1Split[1] + " dice of value " + p1Split[0])
+            state.setPrevBet(tuple([int(p1Split[0]), int(p1Split[1])]))
+        else:
+            print(currPlayer.name+ "'s Turn")
+            #always set to human first but we dont gotta once we start making bots
+            currBetSplit = None
+            while True:
+                currBet = currPlayer.takeBet(state)
+
+                print(currPlayer.name + " bet " + currBet)
+                #deal with the challenge
+                if currBet.lower() == "no":
+                    if currPlayer == mctsbot:
+                        opposingPlayer = p2
+                    else:
+                        opposingPlayer = mctsbot
+                    prevBetCorrect = checkBet(state)
+                    if prevBetCorrect:
+                        return opposingPlayer
+                    else:
+                        return currPlayer
+
+                currBetSplit = currBet.split()
+                if is_valid_bet(state, currBetSplit): break
+
+            print(currPlayer.name + " bet " + currBetSplit[1] + " dice of value " +currBetSplit[0])
+            state.setPrevBet(tuple([int(currBetSplit[0]), int(currBetSplit[1])]))
+
+        # Switch which player's turn it is.
+        currPlayer = p2 if currPlayer == mctsbot else mctsbot
+
 if __name__ == "__main__":
-    simulate_rounds()
+    run_mcts_simulation()
