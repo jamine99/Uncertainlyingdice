@@ -55,48 +55,18 @@ def enumerateStateList():
     return ret
 
 def ql(s, a, r, s_prime, model):
-    # input is some dataframe
-    # for i in 1:size(df)[1]
-    #     # for each row in the dataframe
-    #     s = df[i, 1]
-    #     a = df[i, 2]
-    #     r = df[i, 3]
-    #     s′ = df[i, 4]
     model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - model.Q[s,a])
-        #model = update!(model, s, a, r, s′)
-        #print(model.Q[s,a]); print("\n")
-    # end
-    #print(model.Q)
-    # return model
-# end
 
 def ql_neighbors(s, a, r, s_prime, model):
-    # input is some dataframe
-    # for i in 1:size(df)[1]
-    #     # for each row in the dataframe
-    #     s = df[i, 1]
-    #     a = df[i, 2]
-    #     r = df[i, 3]
-    #     s′ = df[i, 4]
     if model.Q[s,a] == 0:
         neighbors_Q = 0
         for k in range(-20,20):
             # 40 nearest states (bets with same quantity of dice and bets where we have same amount of same dice)
             if s-k > 0 and s-k < 50000:
                 neighbors_Q += ((1/(abs(k)+1))*model.Q[s-k, a])
-        #     end
-        # end
         model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - neighbors_Q)
-        #print(model.Q[s,a])
     else:
         model.Q[s,a] += model.alpha*(r + model.gamma*max(model.Q[s_prime, a] for a in model.A) - model.Q[s,a])
-    #     end
-    #     #model = update!(model, s, a, r, s′)
-    #     #print(model.Q[s,a]); print("\n")
-    # end
-    # print(model.Q)
-    # return model
-# end
 
 def explore(pi, model, s):
     A, epsilon = model.A, pi.epsilon
@@ -113,9 +83,7 @@ def explore(pi, model, s):
         return maxAction
 
 def make_policy(pol, model):
-    # for each state
     for s in model.S:
-        # set pi(state) = action that maximizes Q[s,a]
         max_Q_val = -float("inf")
         max_action = 1
         for a in model.A:
