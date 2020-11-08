@@ -26,4 +26,4 @@ class Bot_NextNum(Player):
                 else:
                     return "no"
 
-        return str(new_numDice) + " " + str(new_dice)
+        return str(new_dice) + " " + str(new_numDice)

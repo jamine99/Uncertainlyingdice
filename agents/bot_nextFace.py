@@ -26,4 +26,4 @@ class Bot_NextFace(Player):
                 new_dice = prev_dice + 1
                 new_numDice = prev_numDice
 
-        return str(new_numDice) + " " + str(new_dice)
+        return str(new_dice) + " " + str(new_numDice)
