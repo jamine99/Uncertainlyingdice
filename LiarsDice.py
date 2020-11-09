@@ -6,6 +6,7 @@ from agents.bot_nextFace import Bot_NextFace
 from agents.random_bot import Random_Bot
 from agents.qlearn_bot import QBot
 from agents.mcts_bot import MctsBot
+from agents.saved_qbot import SavedQBot
 
 from agents.reduced_state import ReducedState
 from agents.QlearningState import state
@@ -200,7 +201,7 @@ def simulate_round(game):
         currPlayer = p2 if currPlayer == qbot else qbot
 
 
-def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=20):
+def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=10000):
     '''
     Simulates many rounds of Liar's Dice for QLearning.
 
@@ -209,7 +210,7 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
         player1_name (string): name for player1
         player2_name (string): name for player2
     '''
-    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability: "))
+    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability, 7 for savedQBot: "))
     player2 = None
     if player2bot == 1:
         player2 = Player(max_num_dice, player2_name)
@@ -228,6 +229,9 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
     elif player2bot == 6:
         player2_name = "Probability Bot"
         player2 = ProbabilityBot(max_num_dice, player2_name)
+    elif player2bot == 7:
+        player2_name = "Saved Q Bot"
+        player2 = SavedQBot(max_num_dice, player2_name)
 
     qbot = QBot(max_num_dice, player1_name)
     game = GameState(qbot, player2)
@@ -263,7 +267,7 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
     plt.show()
 
 
-def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="player2", num_rounds=20):
+def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="player2", num_rounds=10000):
     """
     Set up and simulate many rounds using Monte Carlo Tree Search (mcts).
 
@@ -272,7 +276,7 @@ def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="pl
         player1_name (string): name for player1
         player2_name (string): name for player2
     """
-    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability: "))
+    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability, 7 for savedQBot: "))
     player2 = None
     if player2bot == 1:
         player2 = Player(max_num_dice, player2_name)
@@ -291,6 +295,9 @@ def run_mcts_simulation(max_num_dice=5, player1_name="MctsBot", player2_name="pl
     elif player2bot == 6:
         player2_name = "Probability Bot"
         player2 = ProbabilityBot(max_num_dice, player2_name)
+    elif player2bot == 7:
+        player2_name = "Saved Q Bot"
+        player2 = SavedQBot(max_num_dice, player2_name)
 
     mctsbot = MctsBot(max_num_dice, player1_name)
     game = GameState(mctsbot, player2)
@@ -382,4 +389,4 @@ def simulate_mcts_round(state):
         currPlayer = p2 if currPlayer == mctsbot else mctsbot
 
 if __name__ == "__main__":
-    run_mcts_simulation()
+    simulate_rounds()

@@ -78,14 +78,17 @@ def explore(pi, model, s, game_state):
     if random.random() < epsilon:
         return random.choice(model.action.possible_actions(game_state))
     else:
-        maxScore = -100
-        maxAction= 1
-        for action in model.action.possible_actions(game_state):
-            currScore = lookahead(model,s,action)
-            if currScore > maxScore:
-                maxAction = action
-                maxScore = currScore
-        return maxAction
+        return find_best_action(model, s, game_state)
+
+def find_best_action(model, s, game_state):
+    maxScore = -100
+    maxAction= 1
+    for action in model.action.possible_actions(game_state):
+        currScore = lookahead(model,s,action)
+        if currScore > maxScore:
+            maxAction = action
+            maxScore = currScore
+    return maxAction
 
 def make_policy(pol, model):
     for s in model.S:
