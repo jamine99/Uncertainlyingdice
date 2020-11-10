@@ -4,7 +4,7 @@ from agents.player import Player
 class ProbabilityBot(Player):
     def __init__(self,numDice, name):
         super().__init__(numDice, name)
-        self.threshold = 0.3
+        self.threshold = 0.49
 
     def takeBet(self, state):
         opponent_player = None

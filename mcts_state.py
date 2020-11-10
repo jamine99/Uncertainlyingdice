@@ -24,6 +24,7 @@ class MctsState():
 
     def takeAction(self, action):
         newState = copy.deepcopy(self)
+        newState.game.player2.roll_dice()
 
         # Convert action to an int as required by action class.
         action = int(action)

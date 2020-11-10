@@ -19,6 +19,8 @@ from gamestate import GameState
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
+import collections
+
 #plays through one round of da game and returns which player won that round
 #P1 always goes first
 def round(state):
@@ -61,11 +63,11 @@ def round(state):
                     prevBetCorrect = checkBet(state)
                     if prevBetCorrect:
                         print(opposingPlayer.name + " Won This Round!")
-                        currPlayer.lose_dice()
+                        # currPlayer.lose_dice()
                         return opposingPlayer
                     else:
                         print(currPlayer.name + " Won This Round!")
-                        opposingPlayer.lose_dice()
+                        # opposingPlayer.lose_dice()
                         return currPlayer
 
                 currBetSplit = currBet.split()
@@ -78,7 +80,7 @@ def round(state):
         currPlayer = p2 if currPlayer == p1 else p1
 
 
-def play_game(max_num_dice=5, player1_name="player1", player2_name="player2"):
+def play_game(max_num_dice=5, player1_name="player1", player2_name="player2", num_rounds=10000):
     '''
     Plays one game of Liar's Dice.
 
@@ -87,39 +89,94 @@ def play_game(max_num_dice=5, player1_name="player1", player2_name="player2"):
         player1_name (string): name for player1
         player2_name (string): name for player2
     '''
-    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability: "))
+    player1bot = int(input("Please enter player 1 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability, 7 for savedQBot: "))
+    player1 = None
+    if player1bot == 1:
+        player1 = Player(max_num_dice, player1_name)
+    elif player1bot == 2:
+        player1_name = "Random Bot"
+        player1 = Random_Bot(max_num_dice, player1_name)
+    elif player1bot == 3:
+        player1_name = "Next Number Bot"
+        player1 = Bot_NextNum(max_num_dice, player1_name)
+    elif player1bot == 4:
+        player1_name = "Next Face Bot"
+        player1 = Bot_NextFace(max_num_dice, player1_name)
+    elif player1bot == 5:
+        player1_name = "Challenge Bot"
+        player1 = Bot_Challenge(max_num_dice, player1_name)
+    elif player1bot == 6:
+        player1_name = "Probability Bot"
+        player1 = ProbabilityBot(max_num_dice, player1_name)
+    elif player1bot == 7:
+        player1_name = "Saved Q Bot"
+        player1 = SavedQBot(max_num_dice, player1_name)
+
+    player2bot = int(input("Please enter player 2 type: 1 for human, 2 for random, 3 for nextNum, 4 for nextFace, 5 for challenge, 6 for probability, 7 for savedQBot: "))
     player2 = None
     if player2bot == 1:
         player2 = Player(max_num_dice, player2_name)
     elif player2bot == 2:
-        player2 = Random_Bot(max_num_dice, "Random Bot")
+        player2_name = "Random Bot"
+        player2 = Random_Bot(max_num_dice, player2_name)
     elif player2bot == 3:
-        player2 = Bot_NextNum(max_num_dice, "Next Number Bot")
+        player2_name = "Next Number Bot"
+        player2 = Bot_NextNum(max_num_dice, player2_name)
     elif player2bot == 4:
-        player2 = Bot_NextFace(max_num_dice, "Next Face Bot")
+        player2_name = "Next Face Bot"
+        player2 = Bot_NextFace(max_num_dice, player2_name)
     elif player2bot == 5:
-        player2 = Bot_Challenge(max_num_dice, "Challenge Bot")
+        player2_name = "Challenge Bot"
+        player2 = Bot_Challenge(max_num_dice, player2_name)
     elif player2bot == 6:
-        player2 = ProbabilityBot(max_num_dice, "Probability Bot")
+        player2_name = "Probability Bot"
+        player2 = ProbabilityBot(max_num_dice, player2_name)
+    elif player2bot == 7:
+        player2_name = "Saved Q Bot"
+        player2 = SavedQBot(max_num_dice, player2_name)
 
-    player1 = Player(max_num_dice, player1_name)
-    state = GameState(player1, player2)
+    game = GameState(player1, player2)
 
-    while True:
-        if player1.has_no_dice():
-            print(player2 + " has won the game!")
-            break
-        if player2.has_no_dice():
-            print(player1 + " has won the game!")
-            break
+    wins = { player1_name : 0, player2_name: 0 }
+    for i in range(num_rounds):
+        winner = round(game)
+        wins[winner.name] += 1
 
-        round(state)
-        state.reset_to_round_start()
+        plot_color = ""
+        if winner.name == player1_name:
+            plot_color = "blue"
+        else:
+            plot_color = "red"
+        plt.scatter(i, wins[winner.name] / (i + 1), color=plot_color)
 
-    if len(player1.dice) == 0:
-        print(player2 + " has won the game!")
-    else:
-        print(player1 + " has won the game!")
+        game.reset_to_round_start()
+
+    print("RESULTS")
+    print("Wins for {}: {}\n".format(player1_name, wins[player1_name]))
+    print("Wins for {}: {}\n".format(player2_name, wins[player2_name]))
+    plt.title("Percentage of Wins Over Time")
+    plt.xlabel("Rounds")
+    plt.ylabel("Percentage of Wins")
+    player1_legend = mpatches.Patch(color="blue", label=player1_name)
+    player2_legend = mpatches.Patch(color="red", label=player2_name)
+    plt.legend(handles=[player1_legend, player2_legend])
+    plt.show()
+
+    # while True:
+    #     if player1.has_no_dice():
+    #         print(player2 + " has won the game!")
+    #         break
+    #     if player2.has_no_dice():
+    #         print(player1 + " has won the game!")
+    #         break
+    #
+    #     round(state)
+    #     state.reset_to_round_start()
+    #
+    # if len(player1.dice) == 0:
+    #     print(player2 + " has won the game!")
+    # else:
+    #     print(player1 + " has won the game!")
 
 
 def simulate_round(game):
@@ -201,7 +258,7 @@ def simulate_round(game):
         currPlayer = p2 if currPlayer == qbot else qbot
 
 
-def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=10000):
+def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2", num_rounds=100000):
     '''
     Simulates many rounds of Liar's Dice for QLearning.
 
@@ -234,6 +291,13 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
         player2 = SavedQBot(max_num_dice, player2_name)
 
     qbot = QBot(max_num_dice, player1_name)
+    q_function = collections.defaultdict(float)
+    with open("qfunction_0.49.txt", 'r') as f:
+        lines = f.readlines()
+        for line in lines:
+            s, a, q_value = line.split()
+            q_function[(s, a)] = q_value
+    qbot.model.q = q_function
     game = GameState(qbot, player2)
 
     wins = { player1_name : 0, player2_name: 0 }
@@ -249,7 +313,8 @@ def simulate_rounds(max_num_dice=5, player1_name="AgentQ", player2_name="player2
         plt.scatter(i, wins[winner.name] / (i + 1), color=plot_color)
 
         game.reset_to_round_start()
-        if i%100000 == 0:
+        if (i + 1) % 10000 == 0:
+            print("HERE")
             qbot.model.saveQFunction("qfunction.txt")
 
     for key in qbot.model.Q:
@@ -340,6 +405,7 @@ def simulate_mcts_round(state):
     print(state.to_string())
     mctsbot = state.player1
     p2 = state.player2
+    player2_true_dice = state.player2.dice
     currPlayer = mctsbot
     while(True):
         # Show player 1's hand as if we are player 1.
@@ -347,6 +413,9 @@ def simulate_mcts_round(state):
         #    p1.show_dice()
         # Show current player's dice, can replace with just p1 later on
         currPlayer.show_dice()
+
+        if currPlayer == p2:
+            state.player2.dice = player2_true_dice
 
         # For the first bet, do not allow challenging.
         if state.prevBet == None:
@@ -375,8 +444,10 @@ def simulate_mcts_round(state):
                         opposingPlayer = mctsbot
                     prevBetCorrect = checkBet(state)
                     if prevBetCorrect:
+                        print(opposingPlayer.name + " Won This Round!")
                         return opposingPlayer
                     else:
+                        print(currPlayer.name + " Won This Round!")
                         return currPlayer
 
                 currBetSplit = currBet.split()
@@ -389,4 +460,4 @@ def simulate_mcts_round(state):
         currPlayer = p2 if currPlayer == mctsbot else mctsbot
 
 if __name__ == "__main__":
-    simulate_rounds()
+    run_mcts_simulation()
